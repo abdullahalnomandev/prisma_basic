@@ -27,9 +27,34 @@ const insertOrUpdateProfileController = async (req:Request, res:Response, next:N
     res.send(error);
   }
 };
+const getUsers = async (req:Request, res:Response, next:NextFunction) => {
+  try {
+    const users = await UserService.getUsers();
+    res.status(200).json({
+        status: "success",
+        result:users.length,
+        users
+    })
+  } catch (error) {
+    res.send(error);
+  }
+};
+const getSingleUser = async (req:Request, res:Response) => {
+  try {
+    const user = await UserService.getSingleUser(Number(req.params.userId));
+    res.status(200).json({
+        status: "success",
+        user
+    })
+  } catch (error) {
+    res.send(error);
+  }
+};
 
 
 export const UserController = {
   insertIntoDB,
-  insertOrUpdateProfileController
+  insertOrUpdateProfileController,
+  getUsers,
+  getSingleUser
 };
