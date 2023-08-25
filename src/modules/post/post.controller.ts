@@ -22,8 +22,8 @@ const getPosts = async (req: Request, res: Response) => {
     const users = await PostService.getAllPost(options);
     res.status(200).json({
       status: "success",
-      result: users.length,
-      users
+      result: users.total,
+      users:users.data
     });
   } catch (error) {
     res.send(error);
