@@ -7,47 +7,40 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
-model User{
-  id Int @id @default(autoincrement())
-  email String @unique
-  name String
-  role String
-  profile Profile?
-  posts Post[]
-
-  @@map("users")
+model categories {
+  id    Int     @id @default(autoincrement())
+  name  String
+  posts posts[]
 }
 
-model Profile {
-  id Int @id @default(autoincrement())
-  bio String
-  userId Int @unique
-  user User @relation(fields: [userId],references: [id])
-
-  @@map("profiles")
-}
-
-model Category {
-  id Int @id @default(autoincrement())
-  name String
-  posts Post[]
-
-  @@map("categories")
-}
-
-model Post {
-  id Int @id @default(autoincrement())
-  title String
-  authorId Int
-  author User @relation(fields: [authorId],references: [id])
-
+model posts {
+  id         Int        @id @default(autoincrement())
+  title      String
+  authorId   Int
   categoryId Int
-  category Category @relation(fields: [categoryId],references: [id])
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime
+  users      users      @relation(fields: [authorId], references: [id])
+  categories categories @relation(fields: [categoryId], references: [id])
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model profiles {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  userId Int    @unique
+  users  users  @relation(fields: [userId], references: [id])
+}
 
+model users {
+  id       Int       @id @default(autoincrement())
+  email    String    @unique
+  name     String
+  role     String
+  posts    posts[]
+  profiles profiles?
+}
 
-  @@map("posts")
+model newModel {
+  id String @id @default(uuid())
+  name String
 }

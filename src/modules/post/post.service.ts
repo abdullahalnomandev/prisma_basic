@@ -12,10 +12,12 @@ const insertIntoDB = async (data: Post): Promise<Post> => {
   });
 };
 const getAllPost = async (options: any) => {
+  console.log('getPost');
+  
   const { sortBy, sortOrder, searchTerm, page, limit } = options;
 
-  const skip = parseInt(limit) * parseInt(page) - parseInt(limit);
-  const take = parseInt(limit);
+  const skip = parseInt(limit) * parseInt(page) - parseInt(limit) || 0;
+  const take = parseInt(limit) || 10;
 
   return await prisma.$transaction(async (tx) => {
     const results = await tx.post.findMany({
@@ -55,7 +57,56 @@ const getAllPost = async (options: any) => {
   });
 };
 
+const updatePost = async (id:number,payload:Partial<Post>):Promise<Post> => {
+
+  const result = await prisma.post.update({
+    where:{
+      id
+    },
+    data: payload,
+    include:{
+      author:true,
+      category:true
+    }
+  })
+
+  return result;
+}
+
+const deletePost = async (id:number):Promise<Post> => {
+  const result = await prisma.post.delete({
+    where:{
+      id
+    }
+  })
+
+  return result;
+}
+
+const learnAggregateAndGrouping = async () => {
+  // const result = await prisma.post.aggregate({
+  //   _avg:{
+  //     authorId:true,
+  //     categoryId:true
+  //   },
+  //   _count:{
+  //     authorId:true
+  //   }
+  // })
+
+  const groupUsers = await prisma.post.groupBy({
+    by: ["title","authorId"],
+    _count:{
+      title:true
+    }
+  });
+  return groupUsers;
+}
+
 export const PostService = {
   insertIntoDB,
-  getAllPost
+  getAllPost,
+  updatePost,
+  deletePost,
+  learnAggregateAndGrouping
 };

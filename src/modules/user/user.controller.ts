@@ -32,7 +32,6 @@ const getUsers = async (req:Request, res:Response, next:NextFunction) => {
     const users = await UserService.getUsers();
     res.status(200).json({
         status: "success",
-        result:users.length,
         users
     })
   } catch (error) {
